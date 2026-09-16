@@ -1,0 +1,6 @@
+{
+  "appId": "com.example.jetsnack.profile",
+  "appName": "Jetsnack Profile",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

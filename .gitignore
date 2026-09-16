@@ -1,0 +1,14 @@
+.source-compose-samples/
+pixel-jetsnack*.png
+
+# Android
+**/.gradle/
+**/.idea/
+**/.kotlin/
+**/build/
+**/local.properties
+
+# Node / Vite
+**/node_modules/
+**/dist/
+*.local
