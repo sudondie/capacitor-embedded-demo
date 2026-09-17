@@ -40,9 +40,3 @@ cd ../android-host
 Собран debug APK и проверен на Pixel 5a (Android API 33): нативная лента
 Jetsnack запускается, а Profile отображает React-фичу в `CapacitorWebView`
 вместе с нативным нижним баром.
-
-## Attribution
-
-Android-хост основан на Jetsnack из Android Compose Samples, распространяемом
-по Apache License 2.0. Исходные copyright-заголовки и файл `ASSETS_LICENSE`
-сохранены в `apps/android-host`.
