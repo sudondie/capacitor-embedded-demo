@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.WebSettings;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.example.jetsnack.R;
+import com.example.jetsnack.profile.ProfileHostPlugin;
+import ee.forgr.capacitor_updater.CapacitorUpdaterPlugin;
 
 /**
  * Hosts one Capacitor bridge inside an existing application's Fragment hierarchy.
@@ -22,6 +25,7 @@ public final class EmbeddedCapacitorFragment extends Fragment {
     public static final String TAG = "embedded-capacitor-profile";
 
     private Bridge bridge;
+    private boolean skipWebHistoryOnNextBack;
 
     public EmbeddedCapacitorFragment() {
         super(R.layout.fragment_embedded_capacitor);
@@ -32,6 +36,10 @@ public final class EmbeddedCapacitorFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         Bridge.Builder builder = new Bridge.Builder(this).setInstanceState(savedInstanceState);
+        // The embedded host does not run `npx cap sync`, so native plugins are
+        // registered here rather than through Capacitor's generated registry.
+        builder.addPlugin(CapacitorUpdaterPlugin.class);
+        builder.addPlugin(ProfileHostPlugin.class);
         try {
             builder.addPlugins(new PluginManager(requireContext().getAssets()).loadPluginClasses());
         } catch (PluginLoadException error) {
@@ -39,6 +47,10 @@ public final class EmbeddedCapacitorFragment extends Fragment {
         }
 
         bridge = builder.create();
+        // Local development remote runs over HTTP while Capacitor's bundled shell
+        // is served from https://localhost. Production remotes must use HTTPS;
+        // do not carry this test-only mixed-content override into a release app.
+        bridge.getWebView().getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         bridge.onNewIntent(requireActivity().getIntent());
     }
 
@@ -111,5 +123,22 @@ public final class EmbeddedCapacitorFragment extends Fragment {
         if (bridge != null) {
             bridge.onConfigurationChanged(newConfig);
         }
+    }
+
+    public boolean handleBack() {
+        if (skipWebHistoryOnNextBack) {
+            skipWebHistoryOnNextBack = false;
+            return false;
+        }
+        if (bridge == null || !bridge.getWebView().canGoBack()) {
+            return false;
+        }
+        bridge.getWebView().goBack();
+        return true;
+    }
+
+    /** Forces the host destination to close without consuming a WebView history entry. */
+    public void closeProfile() {
+        skipWebHistoryOnNextBack = true;
     }
 }

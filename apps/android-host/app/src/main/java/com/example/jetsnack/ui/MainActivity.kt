@@ -33,6 +33,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
+    private var embeddedProfileCloser: (() -> Unit)? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -70,6 +72,15 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         embeddedCapacitorFragment()?.onNewIntent(intent)
+    }
+
+    /** Skip WebView history and dismiss the full-screen native destination. */
+    fun closeEmbeddedProfile() {
+        embeddedProfileCloser?.invoke()
+    }
+
+    fun setEmbeddedProfileCloser(closer: (() -> Unit)?) {
+        embeddedProfileCloser = closer
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

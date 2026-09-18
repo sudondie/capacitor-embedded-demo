@@ -166,6 +166,7 @@ fun JetsnackBottomBar(
     tabs: Array<HomeSections>,
     currentRoute: String,
     navigateToRoute: (String) -> Unit,
+    onProfileSelected: () -> Unit,
     modifier: Modifier = Modifier,
     color: Color = JetsnackTheme.colors.iconPrimary,
     contentColor: Color = JetsnackTheme.colors.iconInteractive,
@@ -220,7 +221,10 @@ fun JetsnackBottomBar(
                         )
                     },
                     selected = selected,
-                    onSelected = { navigateToRoute(section.route) },
+                    onSelected = {
+                        if (section == HomeSections.PROFILE) onProfileSelected()
+                        else navigateToRoute(section.route)
+                    },
                     animSpec = springSpec,
                     modifier = BottomNavigationItemPadding
                         .clip(BottomNavIndicatorShape),
@@ -425,6 +429,7 @@ private fun JetsnackBottomNavPreview() {
             tabs = HomeSections.entries.toTypedArray(),
             currentRoute = "home/feed",
             navigateToRoute = { },
+            onProfileSelected = { },
         )
     }
 }

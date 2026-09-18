@@ -34,6 +34,7 @@ object MainDestinations {
     const val SNACK_DETAIL_ROUTE = "snack"
     const val SNACK_ID_KEY = "snackId"
     const val ORIGIN = "origin"
+    const val PROFILE_SHELL_ROUTE = "profile-shell"
 }
 
 /**

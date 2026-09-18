@@ -2,14 +2,14 @@
 
 Демонстрационный monorepo для статьи о встраивании Capacitor в существующее
 native-приложение. Здесь Capacitor не создаёт второе Android-приложение:
-React-фича живёт в `apps/web-feature`, а `apps/android-host` — существующий
+Profile shell живёт в `apps/profile-shell`, а `apps/android-host` — существующий
 Compose-хост, в который она встроена как один из экранов.
 
 ## Состав
 
 - `apps/android-host` — адаптированный [Jetsnack](https://github.com/android/compose-samples/tree/main/Jetsnack)
   из Android Compose Samples. Экран Profile теперь содержит Capacitor bridge.
-- `apps/web-feature` — отдельная React 19 + Vite + Tailwind + shadcn/ui
+- `apps/profile-shell` — отдельная React 19 + Vite + Tailwind + shadcn/ui
   фича профиля.
 
 `EmbeddedCapacitorFragment` — небольшой адаптер вокруг Capacitor 8.5.2:
@@ -24,7 +24,7 @@ Compose размещает `FragmentContainerView`, фрагмент владе�
 level 1. Capacitor 8 требует `minSdk 24`, поэтому demo-хост поднят с 23 до 24.
 
 ```powershell
-cd apps/web-feature
+cd apps/profile-shell
 npm install
 
 cd ../android-host

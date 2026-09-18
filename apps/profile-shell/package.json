@@ -1,5 +1,5 @@
 {
-  "name": "web-feature",
+  "name": "profile-shell",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -19,6 +19,10 @@
     "@capacitor/android": "^8.5.2",
     "@capacitor/cli": "^8.5.2",
     "@capacitor/core": "^8.5.2",
+    "@capacitor/geolocation": "^8.2.2",
+    "@capgo/capacitor-updater": "8.51.18",
+    "@module-federation/bridge-react": "^2.9.0",
+    "@module-federation/vite": "^1.22.0",
     "@tailwindcss/vite": "^4.3.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

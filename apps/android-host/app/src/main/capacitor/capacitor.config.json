@@ -2,5 +2,12 @@
   "appId": "com.example.jetsnack.profile",
   "appName": "Jetsnack Profile",
   "webDir": "dist",
-  "bundledWebRuntime": false
+  "bundledWebRuntime": false,
+  "plugins": {
+    "CapacitorUpdater": {
+      "autoUpdate": "off",
+      "appReadyTimeout": 10000,
+      "statsUrl": ""
+    }
+  }
 }

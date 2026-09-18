@@ -34,9 +34,12 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
@@ -62,6 +65,15 @@ import com.example.jetsnack.ui.theme.JetsnackTheme
 fun JetsnackApp() {
     JetsnackTheme {
         val jetsnackNavController = rememberJetsnackNavController()
+        val activity = LocalContext.current as? MainActivity
+        DisposableEffect(activity, jetsnackNavController) {
+            activity?.setEmbeddedProfileCloser {
+                if (jetsnackNavController.navController.currentDestination?.route == MainDestinations.PROFILE_SHELL_ROUTE) {
+                    jetsnackNavController.navController.popBackStack()
+                }
+            }
+            onDispose { activity?.setEmbeddedProfileCloser(null) }
+        }
         SharedTransitionLayout {
             CompositionLocalProvider(
                 LocalSharedTransitionScope provides this,
@@ -75,6 +87,13 @@ fun JetsnackApp() {
                     ) { backStackEntry ->
                         MainContainer(
                             onSnackSelected = jetsnackNavController::navigateToSnackDetail,
+                            onProfileSelected = {
+                                if (jetsnackNavController.navController.currentDestination?.route != MainDestinations.PROFILE_SHELL_ROUTE) {
+                                    jetsnackNavController.navController.navigate(MainDestinations.PROFILE_SHELL_ROUTE) {
+                                        launchSingleTop = true
+                                    }
+                                }
+                            },
                         )
                     }
 
@@ -98,6 +117,10 @@ fun JetsnackApp() {
                             upPress = jetsnackNavController::upPress,
                         )
                     }
+
+                    composableWithCompositionLocal(MainDestinations.PROFILE_SHELL_ROUTE) {
+                        EmbeddedCapacitorScreen()
+                    }
                 }
             }
         }
@@ -105,11 +128,22 @@ fun JetsnackApp() {
 }
 
 @Composable
-fun MainContainer(modifier: Modifier = Modifier, onSnackSelected: (Long, String, NavBackStackEntry) -> Unit) {
+fun MainContainer(
+    modifier: Modifier = Modifier,
+    onSnackSelected: (Long, String, NavBackStackEntry) -> Unit,
+    onProfileSelected: () -> Unit,
+) {
     val jetsnackScaffoldState = rememberJetsnackScaffoldState()
     val nestedNavController = rememberJetsnackNavController()
     val navBackStackEntry by nestedNavController.navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    // A restored nested Profile destination belongs to the old in-tab implementation.
+    // Immediately promote it to the root Capacitor destination, which has no native bottom bar.
+    LaunchedEffect(currentRoute) {
+        if (currentRoute == HomeSections.PROFILE.route) {
+            onProfileSelected()
+        }
+    }
     val sharedTransitionScope = LocalSharedTransitionScope.current
         ?: throw IllegalStateException("No SharedElementScope found")
     val animatedVisibilityScope = LocalNavAnimatedVisibilityScope.current
@@ -122,6 +156,7 @@ fun MainContainer(modifier: Modifier = Modifier, onSnackSelected: (Long, String,
                         tabs = HomeSections.entries.toTypedArray(),
                         currentRoute = currentRoute ?: HomeSections.FEED.route,
                         navigateToRoute = nestedNavController::navigateToBottomBarRoute,
+                        onProfileSelected = onProfileSelected,
                         modifier = Modifier
                             .renderInSharedTransitionScopeOverlay(
                                 zIndexInOverlay = 1f,

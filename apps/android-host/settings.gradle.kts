@@ -24,7 +24,9 @@ pluginManagement {
     }
 }
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    // Capacitor and Capgo are Gradle subprojects and declare the same trusted
+    // Google/Maven Central repositories as their generated shell normally does.
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
         snapshotVersion?.let {
             println("https://androidx.dev/snapshots/builds/$it/artifacts/repository/") 
@@ -38,3 +40,14 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Jetsnack"
 include(":app")
+
+// This host owns the Android shell. Unlike a generated Capacitor project it
+// must wire Capacitor plugins explicitly from the embedded web feature.
+include(":capacitor-android")
+project(":capacitor-android").projectDir = file("../profile-shell/node_modules/@capacitor/android/capacitor")
+
+include(":capgo-capacitor-updater")
+project(":capgo-capacitor-updater").projectDir = file("../profile-shell/node_modules/@capgo/capacitor-updater/android")
+
+include(":capacitor-geolocation")
+project(":capacitor-geolocation").projectDir = file("../profile-shell/node_modules/@capacitor/geolocation/android")

@@ -16,12 +16,14 @@
 
 package com.example.jetsnack.ui.home
 
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.jetsnack.ui.EmbeddedCapacitorScreen
 
 @Composable
 fun Profile(modifier: Modifier = Modifier) {
-    EmbeddedCapacitorScreen(modifier.fillMaxSize())
+    // Profile is opened as a root full-screen destination from the bottom tab.
+    // Keep this legacy nested destination empty so it cannot retain a WebView
+    // and intercept Back while another native screen is visible.
+    Box(modifier)
 }
