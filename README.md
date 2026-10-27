@@ -21,7 +21,7 @@ Compose размещает `FragmentContainerView`, фрагмент владе�
 ## Сборка
 
 Предварительно нужны Node.js, JDK 17+ и Android SDK Platform 37 with extension
-level 1. Capacitor 8 требует `minSdk 24`, поэтому demo-хост поднят с 23 до 24.
+level 1. Capacitor 8 требует `minSdk 24`.
 
 ```powershell
 cd apps/web-feature
@@ -34,9 +34,3 @@ cd ../android-host
 Задача Gradle сама запускает `npm run build`, затем кладёт Vite-бандл в
 генерируемые Android assets (`public/`) вместе с `capacitor.config.json`.
 Итоговый APK: `apps/android-host/app/build/outputs/apk/debug/app-debug.apk`.
-
-## Проверено
-
-Собран debug APK и проверен на Pixel 5a (Android API 33): нативная лента
-Jetsnack запускается, а Profile отображает React-фичу в `CapacitorWebView`
-вместе с нативным нижним баром.
